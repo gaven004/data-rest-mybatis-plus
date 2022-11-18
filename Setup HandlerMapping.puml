@@ -1,0 +1,14 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+group restHandlerMapping
+    RepositoryRestMvcConfiguration -> RepositoryRestHandlerMapping: new
+    RepositoryRestMvcConfiguration -> RepositoryRestHandlerMapping: afterPropertiesSet()
+
+    RepositoryRestMvcConfiguration -> BasePathAwareHandlerMapping: new
+    RepositoryRestMvcConfiguration -> BasePathAwareHandlerMapping: afterPropertiesSet()
+end
+
+@enduml

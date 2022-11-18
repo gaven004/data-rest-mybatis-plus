@@ -1,0 +1,20 @@
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+logging:
+  level:
+    root: INFO
+    com:
+      g: DEBUG
+
+spring:
+  # 配置数据源信息
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.94.96.234:13306/next?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    username: next
+    password: UnfHtrVxwNOa

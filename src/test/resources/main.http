@@ -1,0 +1,7 @@
+### GET request with a header
+GET http://localhost:8080/_rest
+Accept: application/json
+
+### GET SysProperty
+GET http://localhost:8080/_rest/sysProperty
+Accept: application/json
