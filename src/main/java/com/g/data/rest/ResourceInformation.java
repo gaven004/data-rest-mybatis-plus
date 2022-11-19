@@ -1,44 +1,33 @@
 package com.g.data.rest;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 
 public class ResourceInformation {
-    private String repository;
+    private ResourceMetadata metadata;
 
-    private BaseMapper<?> mapper;
-
-    private Class domainType;
+    private Wrapper wrapper;
 
     public ResourceInformation() {
     }
 
-    public ResourceInformation(String repository, BaseMapper<?> mapper, Class domainType) {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.domainType = domainType;
+    public ResourceInformation(ResourceMetadata metadata, Wrapper wrapper) {
+        this.metadata = metadata;
+        this.wrapper = wrapper;
     }
 
-    public String getRepository() {
-        return repository;
+    public ResourceMetadata getMetadata() {
+        return metadata;
     }
 
-    public void setRepository(String repository) {
-        this.repository = repository;
+    public void setMetadata(ResourceMetadata metadata) {
+        this.metadata = metadata;
     }
 
-    public BaseMapper<?> getMapper() {
-        return mapper;
+    public Wrapper getWrapper() {
+        return wrapper;
     }
 
-    public void setMapper(BaseMapper<?> mapper) {
-        this.mapper = mapper;
-    }
-
-    public Class getDomainType() {
-        return domainType;
-    }
-
-    public void setDomainType(Class domainType) {
-        this.domainType = domainType;
+    public void setWrapper(Wrapper wrapper) {
+        this.wrapper = wrapper;
     }
 }

@@ -29,7 +29,7 @@ public class RepositoryController {
             throw new ResourceNotFoundException();
         }
 
-        final BaseMapper<?> mapper = resourceInformation.getMapper();
+        final BaseMapper<?> mapper = resourceInformation.getMetadata().getMapper();
         return mapper.selectList(null);
     }
 }

@@ -20,8 +20,8 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
     private final ApplicationContext applicationContext;
     private final BaseUri baseUri;
 
-    private final ConcurrentLruCache<String, ResourceInformation> resourceInformationCache = new ConcurrentLruCache<>(256,
-            this::getResourceInformation);
+    private final ConcurrentLruCache<String, ResourceMetadata> resourceMetadataCache = new ConcurrentLruCache<>(256,
+            this::getResourceMetadata);
 
     public ResourceInformationHandlerMethodArgumentResolver(
             ApplicationContext applicationContext, BaseUri baseUri) {
@@ -39,7 +39,7 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
 
     @Override
     public ResourceInformation resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                               NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
+                                            NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
             throws Exception {
         String lookupPath = baseUri.getRepositoryLookupPath(webRequest);
         String repositoryKey = UriUtils.findMappingVariable("repository", parameter.getMethod(), lookupPath);
@@ -48,15 +48,17 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
             return null;
         }
 
-        ResourceInformation ri = resourceInformationCache.get(repositoryKey);
-        if (ri != null) {
-            return ri;
+        ResourceMetadata metadata = resourceMetadataCache.get(repositoryKey);
+        if (metadata == null) {
+            throw new IllegalArgumentException(String.format("Could not resolve repository metadata for %s.", repositoryKey));
         }
 
-        throw new IllegalArgumentException(String.format("Could not resolve repository metadata for %s.", repositoryKey));
+        ResourceInformation information = new ResourceInformation();
+        information.setMetadata(metadata);
+        return information;
     }
 
-    private ResourceInformation getResourceInformation(String key) {
+    private ResourceMetadata getResourceMetadata(String key) {
         String mapperName = key + "Mapper";
 
         // Find by name
@@ -89,6 +91,6 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
             domainType = (Class) actualTypeArguments[0];
         }
 
-        return new ResourceInformation(key, mapper, domainType);
+        return new ResourceMetadata(key, mapper, domainType);
     }
 }
