@@ -96,11 +96,4 @@ public class DataRestConfiguration {
             converters.add(new JsonbHttpMessageConverter());
         }
     }
-
-    private void forwardBeanClassLoader(BeanClassLoaderAware target) {
-
-        if (beanClassLoader != null) {
-            target.setBeanClassLoader(beanClassLoader);
-        }
-    }
 }

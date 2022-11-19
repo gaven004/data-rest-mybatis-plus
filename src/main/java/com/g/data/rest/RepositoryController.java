@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 @RepositoryRestController
@@ -30,6 +31,7 @@ public class RepositoryController {
         }
 
         final BaseMapper<?> mapper = resourceInformation.getMetadata().getMapper();
-        return mapper.selectList(null);
+        final Wrapper wrapper = resourceInformation.getWrapper();
+        return mapper.selectList(wrapper);
     }
 }

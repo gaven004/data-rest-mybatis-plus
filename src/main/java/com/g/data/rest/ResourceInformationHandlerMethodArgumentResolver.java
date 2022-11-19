@@ -5,15 +5,22 @@ import static org.springframework.util.StringUtils.hasText;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
 import org.springframework.util.ConcurrentLruCache;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 public class ResourceInformationHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
@@ -39,8 +46,9 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
 
     @Override
     public ResourceInformation resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                            NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
+                                               NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
             throws Exception {
+
         String lookupPath = baseUri.getRepositoryLookupPath(webRequest);
         String repositoryKey = UriUtils.findMappingVariable("repository", parameter.getMethod(), lookupPath);
 
@@ -53,9 +61,27 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
             throw new IllegalArgumentException(String.format("Could not resolve repository metadata for %s.", repositoryKey));
         }
 
-        ResourceInformation information = new ResourceInformation();
-        information.setMetadata(metadata);
-        return information;
+        Wrapper wrapper = getEntityWrapper(metadata, webRequest, binderFactory);
+
+        return new ResourceInformation(metadata, wrapper);
+    }
+
+    private Wrapper getEntityWrapper(ResourceMetadata metadata, NativeWebRequest request, WebDataBinderFactory binderFactory)
+            throws Exception {
+
+        final Class domainType = metadata.getDomainType();
+        final String name = metadata.getRepository();
+        Object entity = BeanUtils.instantiateClass(domainType);
+
+        WebDataBinder binder = binderFactory.createBinder(request, entity, name);
+        if (binder instanceof ServletRequestDataBinder
+                && request instanceof ServletWebRequest) {
+            ((ServletRequestDataBinder) binder).bind(((ServletWebRequest) request).getRequest());
+        } else if (binder instanceof WebRequestDataBinder) {
+            ((WebRequestDataBinder) binder).bind(request);
+        }
+
+        return new QueryWrapper(binder.getTarget());
     }
 
     private ResourceMetadata getResourceMetadata(String key) {
