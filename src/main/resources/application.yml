@@ -18,3 +18,8 @@ spring:
     url: jdbc:mysql://47.94.96.234:13306/next?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
     username: next
     password: UnfHtrVxwNOa
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 10000
+      max-lifetime: 30000

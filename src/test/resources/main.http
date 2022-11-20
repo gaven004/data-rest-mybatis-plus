@@ -7,7 +7,7 @@ GET http://localhost:8080/_rest
 Accept: application/json
 
 ### GET SysProperty
-GET http://localhost:8080/_rest/sysProperty?status=VALID
+GET http://localhost:8080/_rest/sysProperty?status=VALID&page=1&size=2&sort=sortOrder,asc
 Accept: application/json
 
 ### GET SysProperty PNG

@@ -5,6 +5,7 @@ import static org.springframework.util.StringUtils.hasText;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
@@ -27,8 +28,8 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
     private final ApplicationContext applicationContext;
     private final BaseUri baseUri;
 
-    private final ConcurrentLruCache<String, ResourceMetadata> resourceMetadataCache = new ConcurrentLruCache<>(256,
-            this::getResourceMetadata);
+    private final ConcurrentLruCache<String, ResourceMetadata> resourceMetadataCache =
+            new ConcurrentLruCache<>(256, this::getResourceMetadata);
 
     public ResourceInformationHandlerMethodArgumentResolver(
             ApplicationContext applicationContext, BaseUri baseUri) {
@@ -49,14 +50,12 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
                                                NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
             throws Exception {
 
-        String lookupPath = baseUri.getRepositoryLookupPath(webRequest);
-        String repositoryKey = UriUtils.findMappingVariable("repository", parameter.getMethod(), lookupPath);
-
+        String repositoryKey = getRepositoryKey(parameter, webRequest);
         if (!hasText(repositoryKey)) {
-            return null;
+            throw new IllegalArgumentException(String.format("Could not resolve repository metadata for %s.", repositoryKey));
         }
 
-        ResourceMetadata metadata = resourceMetadataCache.get(repositoryKey);
+        ResourceMetadata metadata = getMetadata(repositoryKey);
         if (metadata == null) {
             throw new IllegalArgumentException(String.format("Could not resolve repository metadata for %s.", repositoryKey));
         }
@@ -64,6 +63,17 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
         Wrapper wrapper = getEntityWrapper(metadata, webRequest, binderFactory);
 
         return new ResourceInformation(metadata, wrapper);
+    }
+
+    @NotNull
+    public ResourceMetadata getMetadata(String repositoryKey) {
+        return resourceMetadataCache.get(repositoryKey);
+    }
+
+    public String getRepositoryKey(MethodParameter parameter, NativeWebRequest webRequest) {
+        String lookupPath = baseUri.getRepositoryLookupPath(webRequest);
+        String repositoryKey = UriUtils.findMappingVariable("repository", parameter.getMethod(), lookupPath);
+        return repositoryKey;
     }
 
     private Wrapper getEntityWrapper(ResourceMetadata metadata, NativeWebRequest request, WebDataBinderFactory binderFactory)

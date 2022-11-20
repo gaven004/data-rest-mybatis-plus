@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 @RepositoryRestController
 public class RepositoryController {
@@ -23,8 +24,7 @@ public class RepositoryController {
 
     @ResponseBody
     @RequestMapping(value = BASE_MAPPING, method = RequestMethod.GET)
-    public Iterable<?> getCollectionResource(ResourceInformation resourceInformation,
-                                             Pageable pageable)
+    public IPage<?> getCollectionResource(ResourceInformation resourceInformation, IPage pageable)
             throws ResourceNotFoundException, HttpRequestMethodNotSupportedException {
         if (null == resourceInformation) {
             throw new ResourceNotFoundException();
@@ -32,6 +32,6 @@ public class RepositoryController {
 
         final BaseMapper<?> mapper = resourceInformation.getMetadata().getMapper();
         final Wrapper wrapper = resourceInformation.getWrapper();
-        return mapper.selectList(wrapper);
+        return mapper.selectPage(pageable, wrapper);
     }
 }
