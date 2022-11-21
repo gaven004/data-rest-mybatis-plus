@@ -4,7 +4,6 @@ import static org.springframework.util.StringUtils.hasText;
 
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,25 +19,17 @@ import com.baomidou.mybatisplus.core.metadata.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 public class MybatisPlusPageHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
-    private final ApplicationContext applicationContext;
-    private final BaseUri baseUri;
     private final ResourceInformationHandlerMethodArgumentResolver repoResolver;
     private final PageableHandlerMethodArgumentResolver pageableResolver;
     private final SortHandlerMethodArgumentResolver sortResolver;
 
-    public MybatisPlusPageHandlerMethodArgumentResolver(ApplicationContext applicationContext,
-                                                        BaseUri baseUri,
-                                                        ResourceInformationHandlerMethodArgumentResolver repoResolver,
+    public MybatisPlusPageHandlerMethodArgumentResolver(ResourceInformationHandlerMethodArgumentResolver repoResolver,
                                                         PageableHandlerMethodArgumentResolver pageableResolver,
                                                         SortHandlerMethodArgumentResolver sortResolver) {
-        Assert.notNull(applicationContext, "ApplicationContext must not be null!");
-        Assert.notNull(baseUri, "BaseUri must not be null!");
         Assert.notNull(repoResolver, "ResourceInformationHandlerMethodArgumentResolver must not be null!");
         Assert.notNull(pageableResolver, "PageableHandlerMethodArgumentResolver must not be null!");
         Assert.notNull(sortResolver, "SortHandlerMethodArgumentResolver must not be null!");
 
-        this.applicationContext = applicationContext;
-        this.baseUri = baseUri;
         this.repoResolver = repoResolver;
         this.pageableResolver = pageableResolver;
         this.sortResolver = sortResolver;

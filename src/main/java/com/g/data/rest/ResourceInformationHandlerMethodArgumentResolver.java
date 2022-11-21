@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
@@ -98,7 +99,12 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
         String mapperName = key + "Mapper";
 
         // Find by name
-        BaseMapper mapper = applicationContext.getBean(mapperName, BaseMapper.class);
+        BaseMapper mapper = null;
+        try {
+            mapper = applicationContext.getBean(mapperName, BaseMapper.class);
+        } catch (BeansException e) {
+            // Ignore
+        }
 
         if (null == mapper) {
             // Find by type
@@ -106,7 +112,7 @@ public class ResourceInformationHandlerMethodArgumentResolver implements Handler
         }
 
         if (null == mapper) {
-            return null;
+            throw new IllegalArgumentException(String.format("Could not resolve repository metadata for %s.", key));
         }
 
         Class<? extends BaseMapper> mapperClass = mapper.getClass();

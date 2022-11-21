@@ -1,5 +1,6 @@
 package com.g.data.rest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,12 +50,39 @@ public class DataRestConfiguration {
 
     @Bean
     public MybatisPlusPageHandlerMethodArgumentResolver pageRequestArgumentResolver(
-            ApplicationContext applicationContext, BaseUri baseUri,
             ResourceInformationHandlerMethodArgumentResolver repoResolver,
             PageableHandlerMethodArgumentResolver pageableResolver,
             SortHandlerMethodArgumentResolver sortResolver) {
-        return new MybatisPlusPageHandlerMethodArgumentResolver(applicationContext, baseUri,
-                repoResolver, pageableResolver, sortResolver);
+        return new MybatisPlusPageHandlerMethodArgumentResolver(repoResolver, pageableResolver, sortResolver);
+    }
+
+    @Bean
+    public BackendIdHandlerMethodArgumentResolver backendIdArgumentResolver(
+            ResourceInformationHandlerMethodArgumentResolver repoResolver, BaseUri baseUri) {
+        return new BackendIdHandlerMethodArgumentResolver(repoResolver, baseUri);
+    }
+
+    @Bean
+    public BackendIdsHandlerMethodArgumentResolver backendIdsArgumentResolver(
+            ResourceInformationHandlerMethodArgumentResolver repoResolver, BaseUri baseUri) {
+        return new BackendIdsHandlerMethodArgumentResolver(repoResolver, baseUri);
+    }
+
+    /**
+     * Reads incoming JSON into an entity.
+     *
+     * @return
+     */
+    @Bean
+    public PersistentEntityResourceHandlerMethodArgumentResolver persistentEntityArgumentResolver(
+            ResourceInformationHandlerMethodArgumentResolver repoRequestArgumentResolver,
+            BackendIdHandlerMethodArgumentResolver backendIdArgumentResolver) {
+
+        List<HttpMessageConverter<?>> defaultMessageConverters = new ArrayList<>(1);
+        extendMessageConverters(defaultMessageConverters);
+
+        return new PersistentEntityResourceHandlerMethodArgumentResolver(defaultMessageConverters,
+                repoRequestArgumentResolver, backendIdArgumentResolver);
     }
 
     /**
@@ -66,9 +94,14 @@ public class DataRestConfiguration {
     @Bean
     public RequestMappingHandlerAdapter repositoryRestHandlerAdapter(
             ResourceInformationHandlerMethodArgumentResolver repoRequestArgumentResolver,
-            MybatisPlusPageHandlerMethodArgumentResolver pageRequestArgumentResolver) {
+            MybatisPlusPageHandlerMethodArgumentResolver pageRequestArgumentResolver,
+            BackendIdHandlerMethodArgumentResolver backendIdArgumentResolver,
+            BackendIdsHandlerMethodArgumentResolver backendIdsArgumentResolver,
+            PersistentEntityResourceHandlerMethodArgumentResolver persistentEntityArgumentResolver) {
+
         RepositoryRestHandlerAdapter handlerAdapter = new RepositoryRestHandlerAdapter(
-                defaultMethodArgumentResolvers(repoRequestArgumentResolver, pageRequestArgumentResolver));
+                defaultMethodArgumentResolvers(repoRequestArgumentResolver, pageRequestArgumentResolver,
+                        backendIdArgumentResolver, backendIdsArgumentResolver, persistentEntityArgumentResolver));
         List<HttpMessageConverter<?>> converters = handlerAdapter.getMessageConverters();
         extendMessageConverters(converters);
         return handlerAdapter;
@@ -76,8 +109,13 @@ public class DataRestConfiguration {
 
     protected List<HandlerMethodArgumentResolver> defaultMethodArgumentResolvers(
             ResourceInformationHandlerMethodArgumentResolver repoRequestArgumentResolver,
-            MybatisPlusPageHandlerMethodArgumentResolver pageRequestArgumentResolver) {
-        return Arrays.asList(pageRequestArgumentResolver, repoRequestArgumentResolver);
+            MybatisPlusPageHandlerMethodArgumentResolver pageRequestArgumentResolver,
+            BackendIdHandlerMethodArgumentResolver backendIdArgumentResolver,
+            BackendIdsHandlerMethodArgumentResolver backendIdsArgumentResolver,
+            PersistentEntityResourceHandlerMethodArgumentResolver persistentEntityArgumentResolver) {
+
+        return Arrays.asList(pageRequestArgumentResolver, repoRequestArgumentResolver,
+                backendIdArgumentResolver, backendIdsArgumentResolver, persistentEntityArgumentResolver);
     }
 
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {

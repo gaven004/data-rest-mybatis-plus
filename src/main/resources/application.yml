@@ -23,3 +23,7 @@ spring:
       minimum-idle: 2
       idle-timeout: 10000
       max-lifetime: 30000
+
+mybatis-plus:
+  global-config:
+    banner: off

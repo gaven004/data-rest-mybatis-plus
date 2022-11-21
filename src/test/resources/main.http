@@ -10,6 +10,60 @@ Accept: application/json
 GET http://localhost:8080/_rest/sysProperty?status=VALID&page=1&size=2&sort=sortOrder,asc
 Accept: application/json
 
+### DELETE SysProperties
+DELETE http://localhost:8080/_rest/sysProperty?ids=359040721228922880,359040721228922990
+Accept: application/json
+
+### GET Resource not found
+GET http://localhost:8080/_rest/sys
+Accept: application/json
+
 ### GET SysProperty PNG
 GET http://localhost:8080/_rest/sysProperty?name=PNG&status=VALID
+Accept: application/json
+
+### GET SysProperty By id
+GET http://localhost:8080/_rest/sysProperty/359040721228922880
+Accept: application/json
+
+### GET SysProperty By id, not found
+GET http://localhost:8080/_rest/sysProperty/359
+Accept: application/json
+
+### POST SysProperty
+POST http://localhost:8080/_rest/sysProperty
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": 359040721228922990,
+  "category": "FILE_TYPE",
+  "name": "PDF",
+  "value": "PDF",
+  "properties": null,
+  "sortOrder": 0,
+  "status": "VALID",
+  "note": ""
+}
+
+### PATCH SysProperty
+PATCH http://localhost:8080/_rest/sysProperty/359040721228922880
+Accept: application/json
+Content-Type: application/json
+
+{
+  "status": "INVALID"
+}
+
+### PUT SysProperty
+PUT http://localhost:8080/_rest/sysProperty/359040721228922880
+Accept: application/json
+Content-Type: application/json
+
+{
+  "status": "VALID"
+}
+
+### DELETE SysProperty
+DELETE http://localhost:8080/_rest/sysProperty/364097947324907520
 Accept: application/json
