@@ -1,7 +1,6 @@
 package com.g.data.rest;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionService;
@@ -36,7 +35,7 @@ public class BackendIdsHandlerMethodArgumentResolver implements HandlerMethodArg
 
     @Override
     public Serializable[] resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                        NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
+                                          NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
             throws Exception {
 
         String lookupPath = baseUri.getRepositoryLookupPath(webRequest);
@@ -67,12 +66,14 @@ public class BackendIdsHandlerMethodArgumentResolver implements HandlerMethodArg
         }
 
         final String[] idSources = idSource.split(",");
+
+        if (keyType.isAssignableFrom(String.class)) {
+            return idSources;
+        }
+
         final ConversionService conversionService = DefaultConversionService.getSharedInstance();
-
         if (conversionService.canConvert(String.class, keyType)) {
-
             Serializable[] ids = new Serializable[idSources.length];
-
             for (int i = 0; i < idSources.length; i++) {
                 ids[i] = (Serializable) conversionService.convert(idSources[i].trim(), keyType);
             }

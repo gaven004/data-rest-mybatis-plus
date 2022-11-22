@@ -3,14 +3,15 @@ package com.g.data.rest;
 import java.io.Serializable;
 import java.util.Optional;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mapping.PersistentEntity;
-import org.springframework.data.repository.support.RepositoryInvoker;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -182,7 +183,6 @@ public class RepositoryController {
 
         return new ResponseEntity<T>(resource.orElse(null), hdrs, status);
     }
-
 
     /**
      * Wrap a resource as a {@link ResponseEntity} and attach given headers and status.

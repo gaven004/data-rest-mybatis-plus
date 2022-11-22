@@ -1,12 +1,11 @@
 package com.g.data.rest;
 
 
-import static org.springframework.util.StringUtils.*;
+import static org.springframework.util.StringUtils.trimTrailingCharacter;
 
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.Assert;

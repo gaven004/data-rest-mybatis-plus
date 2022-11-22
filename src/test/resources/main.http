@@ -1,13 +1,13 @@
 ### Hello
-GET http://localhost:8080/hello
+GET http://localhost:8080/hello?name=world
 Accept: application/json
 
 ### GET request with a header
 GET http://localhost:8080/_rest
 Accept: application/json
 
-### GET SysProperty
-GET http://localhost:8080/_rest/sysProperty?status=VALID&page=1&size=2&sort=sortOrder,asc
+### GET SysProperties
+GET http://localhost:8080/_rest/sysProperty?status=VALID&page=1&size=2&sort=category,asc&sort=sortOrder,asc
 Accept: application/json
 
 ### DELETE SysProperties
@@ -19,7 +19,7 @@ GET http://localhost:8080/_rest/sys
 Accept: application/json
 
 ### GET SysProperty PNG
-GET http://localhost:8080/_rest/sysProperty?name=PNG&status=VALID
+GET http://localhost:8080/_rest/sysProperty?name=JPG&status=VALID
 Accept: application/json
 
 ### GET SysProperty By id
@@ -66,4 +66,9 @@ Content-Type: application/json
 
 ### DELETE SysProperty
 DELETE http://localhost:8080/_rest/sysProperty/364097947324907520
+Accept: application/json
+
+
+### Custom search
+GET http://localhost:8080/_rest/sysProperty/search/selectByCategory?category=FILE_TYPE&page=1&size=2&sort=category,asc&sort=sortOrder,asc
 Accept: application/json

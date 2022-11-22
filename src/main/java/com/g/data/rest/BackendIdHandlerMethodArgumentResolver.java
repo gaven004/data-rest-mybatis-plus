@@ -65,6 +65,10 @@ public class BackendIdHandlerMethodArgumentResolver implements HandlerMethodArgu
             throw new IllegalArgumentException(String.format("Could not resolve key type for %s.", repositoryKey));
         }
 
+        if (keyType.isAssignableFrom(String.class)) {
+            return idSource;
+        }
+
         final ConversionService conversionService = DefaultConversionService.getSharedInstance();
         if (conversionService.canConvert(String.class, keyType)) {
             return (Serializable) conversionService.convert(idSource, keyType);

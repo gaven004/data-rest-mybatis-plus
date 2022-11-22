@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SimpleRestController {
     @RequestMapping(path = "/hello", method = RequestMethod.GET)
-    public ApiResponse hello() {
+    public ApiResponse hello(String name, int i) {
         return ApiResponse.success("Hello");
     }
 }
